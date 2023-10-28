@@ -1,144 +1,116 @@
 import pygame
-import random
 import sys
+import random
 
 # 初始化pygame
 pygame.init()
 
-# 设置颜色变量
+# 设置屏幕宽度和高度
+WIDTH, HEIGHT = 640, 640
+win = pygame.display.set_mode((WIDTH, HEIGHT))
+
+# 设置颜色
 WHITE = (255, 255, 255)
-GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)  # 添加绿色代表入口
 
-# 迷宫的尺寸
-rows, cols = 16,16
-cell_size = 32
+# 迷宫的行列数
+ROWS, COLS = 16, 16
 
-# 设置屏幕大小
-window = pygame.display.set_mode((cols * cell_size, rows * cell_size))
-pygame.display.set_caption("随机迷宫生成")
+# 每个单元格的宽度和高度
+WIDTH_CELL = WIDTH // COLS
+HEIGHT_CELL = HEIGHT // ROWS
 
-# 创建迷宫数组，初始都是墙
-maze = [[1] * cols for _ in range(rows)]
+# 初始化迷宫矩阵，1代表墙，0代表路径
+maze = [[1 for _ in range(COLS)] for _ in range(ROWS)]
 
-def print_array(arr):
-    for row in arr:
-        # 这将转换每个元素为字符串，并在它们之间插入空格，形成一行
-        print(' '.join(map(str, row)))
 
-# 迷宫单元格的类
-class Cell:
-    def __init__(self, row, col):
-        self.row = row
-        self.col = col
-        self.walls = {"top": True, "right": True, "bottom": True, "left": True}
-        self.visited = False
+# 生成迷宫
+def create_maze():
+    # 选择一个起始点
+    start_row, start_col = 0, 0  # 这里我们选择左上角作为起始点
+    maze[start_row][start_col] = 3  # 3代表入口
 
-    def draw(self, window):
-        x = self.col * cell_size
-        y = self.row * cell_size
-        if self.visited:
-            pygame.draw.rect(window, BLUE, (x, y, cell_size, cell_size))
+    # 用栈来存储路径
+    stack = [(start_row, start_col)]
 
-        if self.walls["top"]:
-            pygame.draw.line(window, WHITE, (x, y), (x + cell_size, y), 2)
-        if self.walls["right"]:
-            pygame.draw.line(window, WHITE, (x + cell_size, y), (x + cell_size, y + cell_size), 2)
-        if self.walls["bottom"]:
-            pygame.draw.line(window, WHITE, (x + cell_size, y + cell_size), (x, y + cell_size), 2)
-        if self.walls["left"]:
-            pygame.draw.line(window, WHITE, (x, y + cell_size), (x, y), 2)
+    # 方向
+    directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
 
-# 初始化网格
-grid = []
-for row in range(rows):
-    row_cells = []
-    for col in range(cols):
-        cell = Cell(row, col)
-        row_cells.append(cell)
-    grid.append(row_cells)
-
-# 移动到随机的相邻单元格
-def move_to_next(cell):
-    next_cell = None
-    directions = ["top", "right", "bottom", "left"]
-    random.shuffle(directions)
-
-    for direction in directions:
-        r = cell.row
-        c = cell.col
-        if direction == "top" and r > 0:
-            r -= 1
-        elif direction == "right" and c < cols - 1:
-            c += 1
-        elif direction == "bottom" and r < rows - 1:
-            r += 1
-        elif direction == "left" and c > 0:
-            c -= 1
-
-        if grid[r][c].visited is False:
-            next_cell = grid[r][c]
-            next_cell.visited = True
-
-            # Remove walls
-            if direction == "top":
-                cell.walls["top"] = next_cell.walls["bottom"] = False
-            elif direction == "right":
-                cell.walls["right"] = next_cell.walls["left"] = False
-            elif direction == "bottom":
-                cell.walls["bottom"] = next_cell.walls["top"] = False
-            elif direction == "left":
-                cell.walls["left"] = next_cell.walls["right"] = False
-            break
-
-    return next_cell
-
-# 使用DFS生成迷宫
-def generate_maze(cell):
-    stack = [cell]
     while stack:
-        current = stack[-1]
-        current.visited = True
-        next_cell = move_to_next(current)
+        current_row, current_col = stack[-1]  # 查看当前位置
 
-        if next_cell:
-            stack.append(next_cell)
+        # 获取当前位置可以前往的相邻位置
+        valid_neighbours = []
+        for dr, dc in directions:
+            new_row, new_col = current_row + dr, current_col + dc
+
+            # 检查新位置是否在迷宫范围内并且是墙
+            if 0 <= new_row < ROWS and 0 <= new_col < COLS and maze[new_row][new_col] == 1:
+                # 检查这个相邻位置是否有两个以上的空邻居
+                count_empty = 0
+                for dr2, dc2 in directions:
+                    # 检查相邻位置的相邻位置
+                    if 0 <= new_row + dr2 < ROWS and 0 <= new_col + dc2 < COLS and maze[new_row + dr2][new_col + dc2] == 0:
+                        count_empty += 1
+
+                # 如果有不止一个空的邻居，则这个方向不是一个有效的方向
+                if count_empty < 2:
+                    valid_neighbours.append((new_row, new_col))
+
+        if valid_neighbours:
+            # 随机选择一个有效的邻居作为下一个点
+            next_row, next_col = random.choice(valid_neighbours)
+            # 将新位置设为路径，并将其添加到栈中
+            maze[next_row][next_col] = 0
+            stack.append((next_row, next_col))
         else:
+            # 如果没有有效的邻居，我们已经到达“死胡同”，回溯
             stack.pop()
 
-# 开始生成迷宫
-start_cell = grid[0][0]
-generate_maze(start_cell)
+    # 确保有一个出口，我们设定迷宫的右下角为出口
+    maze[ROWS - 1][COLS - 1] = 2  # 2表示出口
 
-# 根据Cell对象的墙的状态更新迷宫数组
-for row in range(rows):
-    for col in range(cols):
-        cell = grid[row][col]
-        if not any(cell.walls.values()):  # 如果一个单元格四面都没有墙
-            maze[row][col] = 0  # 这表示是一个可行走的路径
 
-# 游戏循环
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-            pygame.quit()
-            sys.exit()
+# 绘制迷宫
+def draw_maze():
+    win.fill(WHITE)
+    for i in range(ROWS):
+        for j in range(COLS):
+            color = BLACK
+            if maze[i][j] == 0:
+                color = WHITE
+            elif maze[i][j] == 2:
+                color = RED
+            elif maze[i][j] == 3:
+                color = GREEN  # 入口用绿色表示
 
-    window.fill((0, 0, 0))  # 使用黑色清空屏幕
+            pygame.draw.rect(win, color, (j * WIDTH_CELL, i * HEIGHT_CELL, WIDTH_CELL, HEIGHT_CELL))
+    pygame.display.update()
 
-    # 根据maze数组和Cell对象的状态绘制迷宫
-    for row in range(rows):
-        for col in range(cols):
-            cell = grid[row][col]
-            cell.draw(window)
-            if maze[row][col] == 0:  # 如果是可行走的路径
-                x = col * cell_size
-                y = row * cell_size
-                pygame.draw.rect(window, GREEN, (x, y, cell_size, cell_size))  # 用绿色绘制
+def print_maze(maze):
+    for row in maze:
+        # 将每个数字转换为字符串，并使用空格连接它们
+        print(' '.join([str(item) for item in row]))
 
-    pygame.display.flip()
+def main():
+    clock = pygame.time.Clock()
+    create_maze()
 
-pygame.quit()
-print_array( maze)
+    running = True
+    while running:
+        clock.tick(60)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+        draw_maze()
+
+    pygame.quit()
+    print_maze(maze)
+    sys.exit()
+
+
+if __name__ == "__main__":
+    main()
