@@ -11,16 +11,19 @@ def player(playerImg, window, x,y):
 
 #Game loop
 def move(playerX, playerY, window, event):
+    COLS = 16
+    player_move = constants.screen_width // COLS
     playerImg = pygame.image.load('cat.png')
+    playerImg = pygame.transform.scale(playerImg, (player_move, player_move))
     if event.type == pygame.KEYDOWN:
         if event.key == pygame.K_LEFT:
-            playerX -= constants.player_move
+            playerX -= player_move
         if event.key == pygame.K_RIGHT:
-            playerX += constants.player_move
+            playerX += player_move
         if event.key == pygame.K_UP:
-            playerY -= constants.player_move
+            playerY -= player_move
         if event.key == pygame.K_DOWN:
-            playerY += constants.player_move
+            playerY += player_move
     playerX = max(0, min(playerX, constants.screen_width-playerImg.get_width()))
     playerY = max(0, min(playerY, constants.screen_height-playerImg.get_height()))
 
