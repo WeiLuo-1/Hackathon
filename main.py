@@ -62,6 +62,10 @@ def main():
     while running:
         clock.tick(60)
 
+        # =======
+        # netcode
+        # =======
+
         # listen for new socket connections
         s = server.accept_connection(serversocket)
         if not s is None:
@@ -96,6 +100,7 @@ def main():
         tilewidth = constants.screen_width // COLS
         tileheight = constants.screen_height // ROWS
 
+        # =================
         # update game logic
         # =================
 
@@ -125,7 +130,10 @@ def main():
 
         playerdata.process(command, mazeData, tilewidth, tileheight, ROWS, COLS)
 
+        # ====================
         # update game graphics
+        # ====================
+
         maze.draw_maze(window, mazeData, COLS, ROWS)
         playerdata.draw(window, tilewidth, tileheight)
         pygame.display.update()
@@ -144,7 +152,6 @@ def main():
             print()
         
     pygame.quit()
-    # maze.print_maze(mazeData)
     sys.exit()
 
 
