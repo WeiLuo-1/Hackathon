@@ -9,31 +9,31 @@ from bot import astar
 import level
 
 pygame.init()
-# 迷宫的行列数
 
-lvl = 1
-
-
-ROWS,COLS = level.level(lvl)
-
-#caption and window Icon
-icon = pygame.image.load('trophy.png')
-pygame.display.set_icon(icon)
-pygame.display.set_caption("Maze Challenge")
-
-# 每个单元格的宽度和高度
-
-
-# 初始化迷宫矩阵，1代表墙，0代表路径
-mazeData = [[1 for _ in range(COLS)] for _ in range(ROWS)]
-maze.create_maze(mazeData,COLS,ROWS)
-window = pygame.display.set_mode((constants.screen_width, constants.screen_height))
-clock = pygame.time.Clock()
 def main():
+    # set up pygame window
+    icon = pygame.image.load('trophy.png')
+    pygame.display.set_icon(icon)
+    pygame.display.set_caption("Maze Challenge")
+    window = pygame.display.set_mode((constants.screen_width, constants.screen_height))
+
+    # set up pygame clock
+    clock = pygame.time.Clock()
+
+    # ================
+    # set up game data
+    # ================
+
+    playerdata = player.Player()
+
+    lvl = 1
     
-    global lvl
-    global mazeData
-    global COLS,ROWS
+    # 迷宫的行列数
+    ROWS,COLS = level.level(lvl)
+
+    # 初始化迷宫矩阵，1代表墙，0代表路径
+    mazeData = [[1 for _ in range(COLS)] for _ in range(ROWS)]
+    maze.create_maze(mazeData,COLS,ROWS)
 
     # set up sockets
     serverport = 42000 + random.randint(0, 10) # random port for easier testing
@@ -44,15 +44,10 @@ def main():
     inboundmessages: list[str] = [] # queue of messages received
     outboundmessages: list[str] = [] # queue of messages to send
 
-    # set up game data
-    playerdata = player.Player()
-
-    # 设置屏幕宽度和高度
-    
+    # detect impossible mazes
     while astar(mazeData) == None:
         mazeData = [[1 for _ in range(COLS)] for _ in range(ROWS)]
         maze.create_maze(mazeData, COLS, ROWS)
-
     
     path = astar(mazeData)
     print(path)
