@@ -1,6 +1,5 @@
 import pygame
 import os
-import constants
 
 os.environ['SDL_AUDIODRIVER'] = 'dsp'
 
