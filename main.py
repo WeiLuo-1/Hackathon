@@ -63,6 +63,7 @@ def main():
     
     path = astar(mazeData)
     print(path)
+    print()
 
     running = True
     while running:
@@ -129,6 +130,9 @@ def main():
             mazeData = [[1 for _ in range(COLS)] for _ in range(ROWS)]
             maze.create_maze(mazeData,COLS,ROWS)
             playerdata.x, playerdata.y = 0,0
+            path = astar(mazeData)
+            print(path)
+            print()
         
         # ====================
         # update game graphics
