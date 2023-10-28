@@ -1,5 +1,6 @@
 import pygame
 import os
+import constants
 
 os.environ['SDL_AUDIODRIVER'] = 'dsp'
 
@@ -18,22 +19,20 @@ class Player:
         self.sprite = pygame.transform.scale(self.sprite, (tilewidth, tileheight))
         window.blit(self.sprite, (screenx, screeny))
     
-    def process(self, events: list[pygame.event.Event], map: list[list[int]], tilewidth: int, tileheight: int, numrows: int, numcolumns: int) -> None:
-        for event in events:
-            if event.type != pygame.KEYDOWN:
-                continue
-            if event.key == pygame.K_LEFT:
-                if self.x - 1 >= 0 and map[self.y][self.x-1] != 1:
-                    self.x -= 1
-            if event.key == pygame.K_RIGHT:
-                if self.x + 1 < numcolumns and map[self.y][self.x+1] != 1:
-                    self.x += 1
-            if event.key == pygame.K_UP:
-                if self.y - 1 >= 0 and map[self.y-1][self.x] != 1:
-                    self.y -= 1
-            if event.key == pygame.K_DOWN:
-                if self.y + 1 < numrows and map[self.y+1][self.x] != 1:
-                    self.y += 1
+    def process(self, command: str, map: list[list[int]], tilewidth: int, tileheight: int, numrows: int, numcolumns: int) -> None:
+
+        if command == constants.COMMAND_MOVE_LEFT:
+            if self.x - 1 >= 0 and map[self.y][self.x-1] != 1:
+                self.x -= 1
+        if command == constants.COMMAND_MOVE_RIGHT:
+            if self.x + 1 < numcolumns and map[self.y][self.x+1] != 1:
+                self.x += 1
+        if command == constants.COMMAND_MOVE_UP:
+            if self.y - 1 >= 0 and map[self.y-1][self.x] != 1:
+                self.y -= 1
+        if command == constants.COMMAND_MOVE_DOWN:
+            if self.y + 1 < numrows and map[self.y+1][self.x] != 1:
+                self.y += 1
         
         self.x = max(0, min(self.x, numcolumns - 1))
         self.y = max(0, min(self.y, numrows - 1))
