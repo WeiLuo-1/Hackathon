@@ -17,9 +17,9 @@ lvl = 1
 ROWS,COLS = level.level(lvl)
 
 #caption and window Icon
-icon = pygame.image.load('spaceship.png')
+icon = pygame.image.load('trophy.png')
 pygame.display.set_icon(icon)
-pygame.display.set_caption("space invaders")
+pygame.display.set_caption("Maze Challenge")
 
 # 每个单元格的宽度和高度
 
@@ -30,14 +30,12 @@ maze.create_maze(mazeData,COLS,ROWS)
 window = pygame.display.set_mode((constants.screen_width, constants.screen_height))
 clock = pygame.time.Clock()
 def main():
+    
     global lvl
     global mazeData
     global COLS,ROWS
-    
-    # ==============
-    # set up sockets
-    # ==============
 
+    # set up sockets
     serverport = 42000 + random.randint(0, 10) # random port for easier testing
     serversocket = server.start_server('localhost', serverport)
     print(f'started server on port {serverport}')
@@ -46,31 +44,22 @@ def main():
     inboundmessages: list[str] = [] # queue of messages received
     outboundmessages: list[str] = [] # queue of messages to send
 
-    # ================
     # set up game data
-    # ================
-
     playerdata = player.Player()
 
     # 设置屏幕宽度和高度
     
-    # make sure the cells next to the exit not blocked
-    while mazeData[ROWS-2][COLS-1] == 1 and mazeData[ROWS-1][COLS-2] == 1:
-        mazeData = [[1 for _ in range(COLS)] for _ in range(ROWS)]
-        maze.create_maze(mazeData, COLS, ROWS)
-        print("regenerate")
+    while astar(mazeData) == None:
+        maze.create_maze(mazeData, COLS, ROWS)  
 
     
     path = astar(mazeData)
     print(path)
+    print()
 
     running = True
     while running:
         clock.tick(60)
-
-        # =======
-        # netcode
-        # =======
 
         # listen for new socket connections
         s = server.accept_connection(serversocket)
@@ -106,7 +95,6 @@ def main():
         tilewidth = constants.screen_width // COLS
         tileheight = constants.screen_height // ROWS
 
-        # =================
         # update game logic
         # =================
 
@@ -136,22 +124,25 @@ def main():
 
         playerdata.process(command, mazeData, tilewidth, tileheight, ROWS, COLS)
 
+        # update game graphics
+        maze.draw_maze(window, mazeData, COLS, ROWS)
+        playerdata.draw(window, tilewidth, tileheight)
+        pygame.display.update()
+
         if mazeData[playerdata.y][playerdata.x] == 2:
             lvl += 1
             ROWS,COLS = level.level(lvl)
             mazeData = [[1 for _ in range(COLS)] for _ in range(ROWS)]
             maze.create_maze(mazeData,COLS,ROWS)
             playerdata.x, playerdata.y = 0,0
+            path = astar(mazeData)
+            print(path)
+            print()
         
-        # ====================
-        # update game graphics
-        # ====================
-        maze.draw_maze(window, mazeData, COLS, ROWS)
-        playerdata.draw(window, tilewidth, tileheight)
-        pygame.display.update()
-
     pygame.quit()
+    # maze.print_maze(mazeData)
     sys.exit()
+
 
 if __name__ == "__main__":
     main()
