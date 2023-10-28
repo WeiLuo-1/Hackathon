@@ -3,9 +3,6 @@ import random
 import constants
 
 
-
-
-
 # 生成迷宫
 def create_maze(maze, COLS, ROWS):
     # 选择一个起始点

@@ -45,11 +45,15 @@ def main():
 
         playerdata.process(events, mazeData, tilewidth, tileheight, ROWS, COLS)
         playerdata.draw(window, tilewidth, tileheight)
+
+        if mazeData[playerdata.y][playerdata.x] == 2:
+            running = False
+            print("YOU WIN")
         
         pygame.display.update()
         
     pygame.quit()
-    maze.print_maze(mazeData)
+    # maze.print_maze(mazeData)
     sys.exit()
 
 
