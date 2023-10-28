@@ -46,11 +46,11 @@ def main():
     outboundmessages: list[str] = [] # queue of messages to send
 
     # detect impossible mazes
-    while astar(mazeData) == None:
+    while astar(mazeData, playerdata.x, playerdata.y) == None:
         mazeData = [[1 for _ in range(COLS)] for _ in range(ROWS)]
         maze.create_maze(mazeData, COLS, ROWS)
     
-    path = astar(mazeData)
+    path = astar(mazeData, playerdata.x, playerdata.y)
     print(path)
     print()
 
@@ -139,11 +139,11 @@ def main():
             ROWS,COLS = level.level(lvl)
             mazeData = [[1 for _ in range(COLS)] for _ in range(ROWS)]
             maze.create_maze(mazeData,COLS,ROWS)
-            while astar(mazeData) == None:
+            while astar(mazeData, playerdata.x, playerdata.y) == None:
                 mazeData = [[1 for _ in range(COLS)] for _ in range(ROWS)]
                 maze.create_maze(mazeData, COLS, ROWS)
             playerdata.x, playerdata.y = 0,0
-            path = astar(mazeData)
+            path = astar(mazeData, playerdata.x, playerdata.y)
             print(path)
             print()
         

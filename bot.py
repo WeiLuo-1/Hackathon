@@ -32,9 +32,9 @@ def find_entries(maze):
     return entrance, exit
 
 
-def astar(maze):
+def astar(maze, playerx, playery):
     start, end = find_entries(maze)
-
+    start = (playery, playerx)
     start_node = Node(None, start)
     end_node = Node(None, end)
 
@@ -146,7 +146,7 @@ def main():
     for row in maze:
         print(row)
 
-    path = astar(maze)
+    path = astar(maze, playerx, playery)
     print(path)
 
     commands: list[str] = []
