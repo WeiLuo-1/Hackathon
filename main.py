@@ -25,7 +25,11 @@ mazeData = [[1 for _ in range(COLS)] for _ in range(ROWS)]
 window = pygame.display.set_mode((constants.screen_width, constants.screen_height))
 clock = pygame.time.Clock()
 def main():
+
+    # ==============
     # set up sockets
+    # ==============
+
     serverport = 42000 + random.randint(0, 10) # random port for easier testing
     serversocket = server.start_server('localhost', serverport)
     print(f'started server on port {serverport}')
@@ -34,7 +38,10 @@ def main():
     inboundmessages: list[str] = [] # queue of messages received
     outboundmessages: list[str] = [] # queue of messages to send
 
+    # ================
     # set up game data
+    # ================
+
     playerdata = player.Player()
 
     # 设置屏幕宽度和高度
@@ -46,6 +53,10 @@ def main():
     running = True
     while running:
         clock.tick(60)
+
+        # =======
+        # netcode
+        # =======
 
         # listen for new socket connections
         s = server.accept_connection(serversocket)
@@ -81,22 +92,36 @@ def main():
         tilewidth = constants.screen_width // COLS
         tileheight = constants.screen_height // ROWS
 
+        # =================
         # update game logic
-        playerdata.process(events, mazeData, tilewidth, tileheight, ROWS, COLS)
+        # =================
 
-        # update game graphics
-        maze.draw_maze(window, mazeData, COLS, ROWS)
-        playerdata.draw(window, tilewidth, tileheight)
-        pygame.display.update()
+        command = ''
+        if len(inboundmessages) > 0:
+            command = inboundmessages.pop(0)
+        if command == 'get_gamestate':
+            m = ''
+            for row in mazeData:
+                for col in row:
+                    m += str(col)
+                m += '\n'
+            outboundmessages.append(m)
+
+        playerdata.process(events, mazeData, tilewidth, tileheight, ROWS, COLS)
 
         if mazeData[playerdata.y][playerdata.x] == 2:
             running = False
             print("YOU WIN")
-        
-    pygame.quit()
-    # maze.print_maze(mazeData)
-    sys.exit()
 
+        # ====================
+        # update game graphics
+        # ====================
+        maze.draw_maze(window, mazeData, COLS, ROWS)
+        playerdata.draw(window, tilewidth, tileheight)
+        pygame.display.update()
+
+    pygame.quit()
+    sys.exit()
 
 if __name__ == "__main__":
     main()
