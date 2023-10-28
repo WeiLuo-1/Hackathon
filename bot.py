@@ -1,5 +1,5 @@
 import heapq
-
+import socket
 
 class Node:
     def __init__(self, parent=None, position=None):
@@ -117,17 +117,37 @@ def add_to_open(open_list, child):
 
 
 def main():
-    maze = [
-        [0, 1, 3, 0, 0, 0],
-        [0, 1, 0, 1, 0, 0],
-        [0, 0, 0, 1, 0, 0],
-        [0, 1, 1, 0, 0, 0],
-        [0, 0, 0, 0, 1, 2],
-    ]
+    maze: list[list[int]] = []
+
+    clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    clientsocket.connect(('localhost', 42000))
+
+    clientsocket.send('get_state\n'.encode('ascii'))
+    clientsocket.settimeout(10)
+    state = clientsocket.recv(4096)
+    response = state.decode('ascii')
+    print(response)
+
+    playerx, playery, columns, mazetext = response.split()
+    playerx = int(playerx)
+    playery = int(playery)
+    columns = int(columns)
+
+    row = 0
+    while len(mazetext) > 0:
+        maze.append([])
+        for col in range(columns):
+            c = mazetext[0]
+            mazetext = mazetext[1:]
+            maze[row].append(int(c))
+
+        row += 1
+    
+    for row in maze:
+        print(row)
 
     path = astar(maze)
     print(path)
-
 
 if __name__ == "__main__":
     main()

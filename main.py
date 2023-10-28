@@ -36,7 +36,8 @@ def main():
     maze.create_maze(mazeData,COLS,ROWS)
 
     # set up sockets
-    serverport = 42000 + random.randint(0, 10) # random port for easier testing
+    # serverport = 42000 + random.randint(0, 10) # random port for easier testing
+    serverport = 42000
     serversocket = server.start_server('localhost', serverport)
     print(f'started server on port {serverport}')
 
@@ -103,11 +104,11 @@ def main():
         if len(inboundmessages) > 0:
             command = inboundmessages.pop(0)
         if command == constants.COMMAND_GET_STATE:
-            m = ''
+            m = f'{playerdata.x} {playerdata.y} {COLS} '
             for row in mazeData:
                 for col in row:
                     m += str(col)
-                m += '\n'
+            m += '\n'
             outboundmessages.append(m)
         
         # allow player to interactively send commands (using arrow keys)
