@@ -69,7 +69,7 @@ def draw_maze(window,maze, COLS, ROWS):
                 color = constants.GREEN  # 入口用绿色表示
 
             pygame.draw.rect(window, color, (j * WIDTH_CELL, i * HEIGHT_CELL, WIDTH_CELL, HEIGHT_CELL))
-    pygame.display.update()
+    # pygame.display.update()
 
 def print_maze(maze):
     for row in maze:
