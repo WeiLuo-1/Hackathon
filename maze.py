@@ -1,13 +1,10 @@
 import pygame
-import sys
-import random
 
-# 初始化pygame
-pygame.init()
+import random
+import constants
 
 # 设置屏幕宽度和高度
-WIDTH, HEIGHT = 640, 640
-win = pygame.display.set_mode((WIDTH, HEIGHT))
+win = pygame.display.set_mode((constants.WIDTH, constants.HEIGHT))
 
 # 设置颜色
 WHITE = (255, 255, 255)
@@ -19,8 +16,8 @@ GREEN = (0, 255, 0)  # 添加绿色代表入口
 ROWS, COLS = 16, 16
 
 # 每个单元格的宽度和高度
-WIDTH_CELL = WIDTH // COLS
-HEIGHT_CELL = HEIGHT // ROWS
+WIDTH_CELL = constants.WIDTH // COLS
+HEIGHT_CELL = constants.HEIGHT // ROWS
 
 # 初始化迷宫矩阵，1代表墙，0代表路径
 maze = [[1 for _ in range(COLS)] for _ in range(ROWS)]
@@ -88,29 +85,9 @@ def draw_maze():
 
             pygame.draw.rect(win, color, (j * WIDTH_CELL, i * HEIGHT_CELL, WIDTH_CELL, HEIGHT_CELL))
     pygame.display.update()
-
+    
 def print_maze(maze):
     for row in maze:
         # 将每个数字转换为字符串，并使用空格连接它们
         print(' '.join([str(item) for item in row]))
 
-def main():
-    clock = pygame.time.Clock()
-    create_maze()
-
-    running = True
-    while running:
-        clock.tick(60)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-
-        draw_maze()
-
-    pygame.quit()
-    print_maze(maze)
-    sys.exit()
-
-
-if __name__ == "__main__":
-    main()
