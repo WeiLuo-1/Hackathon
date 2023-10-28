@@ -18,7 +18,6 @@ class Player:
         screeny = self.y * tileheight
         self.sprite = pygame.transform.scale(self.sprite, (tilewidth, tileheight))
         window.blit(self.sprite, (screenx, screeny))
-        pygame.display.update()
     
     def process(self, events: list[pygame.event.Event], map: list[list[int]], tilewidth: int, tileheight: int, numrows: int, numcolumns: int) -> None:
         for event in events:
@@ -39,4 +38,3 @@ class Player:
         
         self.x = max(0, min(self.x, numcolumns - 1))
         self.y = max(0, min(self.y, numrows - 1))
-

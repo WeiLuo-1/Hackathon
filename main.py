@@ -45,7 +45,8 @@ def main():
 
         playerdata.process(events, mazeData, tilewidth, tileheight, ROWS, COLS)
         playerdata.draw(window, tilewidth, tileheight)
-        # pygame.display.update()
+        
+        pygame.display.update()
         
     pygame.quit()
     maze.print_maze(mazeData)
