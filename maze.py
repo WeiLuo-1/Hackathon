@@ -1,30 +1,13 @@
 import pygame
-
 import random
 import constants
 
-# 设置屏幕宽度和高度
-win = pygame.display.set_mode((constants.WIDTH, constants.HEIGHT))
 
-# 设置颜色
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)  # 添加绿色代表入口
 
-# 迷宫的行列数
-ROWS, COLS = 16, 16
-
-# 每个单元格的宽度和高度
-WIDTH_CELL = constants.WIDTH // COLS
-HEIGHT_CELL = constants.HEIGHT // ROWS
-
-# 初始化迷宫矩阵，1代表墙，0代表路径
-maze = [[1 for _ in range(COLS)] for _ in range(ROWS)]
 
 
 # 生成迷宫
-def create_maze():
+def create_maze(maze, COLS, ROWS):
     # 选择一个起始点
     start_row, start_col = 0, 0  # 这里我们选择左上角作为起始点
     maze[start_row][start_col] = 3  # 3代表入口
@@ -70,22 +53,24 @@ def create_maze():
     maze[ROWS - 1][COLS - 1] = 2  # 2表示出口
 
 
-# 绘制迷宫
-def draw_maze():
-    win.fill(WHITE)
+# draw maze
+def draw_maze(window,maze, COLS, ROWS):
+    WIDTH_CELL = constants.screen_width // COLS
+    HEIGHT_CELL = constants.screen_height // ROWS
+    window.fill(constants.WHITE)
     for i in range(ROWS):
         for j in range(COLS):
-            color = BLACK
+            color = constants.BLACK
             if maze[i][j] == 0:
-                color = WHITE
+                color = constants.WHITE
             elif maze[i][j] == 2:
-                color = RED
+                color = constants.RED
             elif maze[i][j] == 3:
-                color = GREEN  # 入口用绿色表示
+                color = constants.GREEN  # 入口用绿色表示
 
-            pygame.draw.rect(win, color, (j * WIDTH_CELL, i * HEIGHT_CELL, WIDTH_CELL, HEIGHT_CELL))
+            pygame.draw.rect(window, color, (j * WIDTH_CELL, i * HEIGHT_CELL, WIDTH_CELL, HEIGHT_CELL))
     pygame.display.update()
-    
+
 def print_maze(maze):
     for row in maze:
         # 将每个数字转换为字符串，并使用空格连接它们
