@@ -40,7 +40,7 @@ def main():
     serversocket = server.start_server('localhost', serverport)
     print(f'started server on port {serverport}')
 
-    clientconnections: list[sever.ClientConnection] = [] # list of connections
+    clientconnections: list[server.ClientConnection] = [] # list of connections
     inboundmessages: list[str] = [] # queue of messages received
     outboundmessages: list[str] = [] # queue of messages to send
 
@@ -50,7 +50,8 @@ def main():
     # 设置屏幕宽度和高度
     
     while astar(mazeData) == None:
-        maze.create_maze(mazeData, COLS, ROWS)  
+        mazeData = [[1 for _ in range(COLS)] for _ in range(ROWS)]
+        maze.create_maze(mazeData, COLS, ROWS)
 
     
     path = astar(mazeData)
@@ -108,6 +109,9 @@ def main():
             ROWS,COLS = level.level(lvl)
             mazeData = [[1 for _ in range(COLS)] for _ in range(ROWS)]
             maze.create_maze(mazeData,COLS,ROWS)
+            while astar(mazeData) == None:
+                mazeData = [[1 for _ in range(COLS)] for _ in range(ROWS)]
+                maze.create_maze(mazeData, COLS, ROWS)
             playerdata.x, playerdata.y = 0,0
             path = astar(mazeData)
             print(path)
