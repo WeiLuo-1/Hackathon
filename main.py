@@ -113,15 +113,28 @@ def main():
         command = ''
         if len(inboundmessages) > 0:
             command = inboundmessages.pop(0)
-        if command == 'get_gamestate':
+        if command == constants.COMMAND_GET_STATE:
             m = ''
             for row in mazeData:
                 for col in row:
                     m += str(col)
                 m += '\n'
             outboundmessages.append(m)
+        
+        # allow player to interactively send commands (using arrow keys)
+        for event in events:
+            if event.type != pygame.KEYDOWN:
+                continue
+            if event.key == pygame.K_LEFT:
+                command = constants.COMMAND_MOVE_LEFT
+            if event.key == pygame.K_RIGHT:
+                command = constants.COMMAND_MOVE_RIGHT
+            if event.key == pygame.K_UP:
+                command = constants.COMMAND_MOVE_UP
+            if event.key == pygame.K_DOWN:
+                command = constants.COMMAND_MOVE_DOWN
 
-        playerdata.process(events, mazeData, tilewidth, tileheight, ROWS, COLS)
+        playerdata.process(command, mazeData, tilewidth, tileheight, ROWS, COLS)
 
         if mazeData[playerdata.y][playerdata.x] == 2:
             lvl += 1
