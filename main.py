@@ -43,7 +43,7 @@ def main():
         tilewidth = constants.screen_width // COLS
         tileheight = constants.screen_height // ROWS
 
-        playerdata.process(events, tilewidth, tileheight, ROWS, COLS)
+        playerdata.process(events, mazeData, tilewidth, tileheight, ROWS, COLS)
         playerdata.draw(window, tilewidth, tileheight)
         # pygame.display.update()
         
