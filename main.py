@@ -5,10 +5,15 @@ import constants
 import random
 import player
 from bot import astar 
+import level
 
 pygame.init()
 # 迷宫的行列数
-ROWS, COLS = 16, 16
+
+lvl = 1
+
+
+ROWS,COLS = level.level(lvl)
 
 #caption and window Icon
 icon = pygame.image.load('spaceship.png')
@@ -20,15 +25,22 @@ pygame.display.set_caption("space invaders")
 
 # 初始化迷宫矩阵，1代表墙，0代表路径
 mazeData = [[1 for _ in range(COLS)] for _ in range(ROWS)]
-
+maze.create_maze(mazeData,COLS,ROWS)
 window = pygame.display.set_mode((constants.screen_width, constants.screen_height))
 clock = pygame.time.Clock()
 def main():
+    
+    global lvl
+    global mazeData
+    global COLS,ROWS
     playerdata = player.Player()
 
     # 设置屏幕宽度和高度
-  
-    maze.create_maze(mazeData, COLS, ROWS)
+    
+    while astar(mazeData) == None:
+        maze.create_maze(mazeData, COLS, ROWS)  
+
+    
     path = astar(mazeData)
     print(path)
 
@@ -49,8 +61,11 @@ def main():
         playerdata.draw(window, tilewidth, tileheight)
 
         if mazeData[playerdata.y][playerdata.x] == 2:
-            running = False
-            print("YOU WIN")
+            lvl += 1
+            ROWS,COLS = level.level(lvl)
+            mazeData = [[1 for _ in range(COLS)] for _ in range(ROWS)]
+            maze.create_maze(mazeData,COLS,ROWS)
+            playerdata.x, playerdata.y = 0,0
         
         pygame.display.update()
         
