@@ -19,7 +19,6 @@ playerImg = pygame.image.load('cat.png')
 playerX = 0
 playerY = 0
 
-constant.player_move = 16
 
 #draw the player in the screen
 def player(x,y):
@@ -38,6 +37,8 @@ while running:
     
 
         if event.type == pygame.KEYDOWN:
+         
+
             if event.key == pygame.K_LEFT:
                 playerX -= constant.player_move
             if event.key == pygame.K_RIGHT:
@@ -46,9 +47,9 @@ while running:
                 playerY -= constant.player_move
             if event.key == pygame.K_DOWN:
                 playerY += constant.player_move
-            playerX = max(0, min(playerX, 1280))
-            playerY = max(0, min(playerY, 720))
-
+        playerX = max(0, min(playerX, 1280-playerImg.get_width()))
+        playerY = max(0, min(playerY, 720-playerImg.get_height()))
+        
                
     
     player(playerX,playerY)
