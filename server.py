@@ -11,6 +11,7 @@ class ClientConnection:
         atexit.register(self.disconnect) # make sure socket is closed on crash
 
         self.socket: socket.socket = s
+        self.isopen = True
         self.inboundbuffer = bytearray()      # buffer of inbound bytes
         self.outboundbuffer = bytearray()     # buffer of outbound bytes
         self.inboundmessages: list[str] = []  # queue of inbound messages
@@ -24,6 +25,9 @@ class ClientConnection:
         - extracts complete messages (newline-terminated ascii strings)
         - sends outbound data
         """
+        if not self.isopen:
+            return
+
         inboundbytes = self._get_bytes()
         if inboundbytes != b'':
             inboundmessage = inboundbytes.decode('ascii')
@@ -41,6 +45,9 @@ class ClientConnection:
         """
         Gets all messages in the inbound message queue and clears the queue.
         """
+        if not self.isopen:
+            return []
+
         messages = self.inboundmessages.copy()
         self.inboundmessages.clear()
         return messages
@@ -49,6 +56,9 @@ class ClientConnection:
         """
         Adds a message to the outbound message queue.
         """
+        if not self.isopen:
+            return
+
         self.outboundmessages.append(message)
         return
     
@@ -89,6 +99,9 @@ class ClientConnection:
             numsent = self.socket.send(self.outboundbuffer)
         except BlockingIOError:
             return
+        except BrokenPipeError: # client disconnected
+            self.disconnect()
+            return
         
         self.outboundbuffer = self.outboundbuffer[numsent:] # remove sent bytes from buffer
         return
@@ -100,6 +113,7 @@ class ClientConnection:
           (see http://www.faqs.org/faqs/unix-faq/socket/ sections 2.5 and 2.7).
         """
         self.socket.close()
+        self.isopen = False
 
 def accept_connection(serversocket: socket.socket) -> socket.socket:
     try:
