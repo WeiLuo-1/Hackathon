@@ -101,7 +101,7 @@ class ClientConnection:
         """
         self.socket.close()
 
-def accept_connection() -> socket.socket:
+def accept_connection(serversocket: socket.socket) -> socket.socket:
     try:
         clientsocket, clientaddress = serversocket.accept()
         clientsocket.setblocking(False)
