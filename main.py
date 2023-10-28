@@ -31,6 +31,8 @@ def main():
     print(f'started server on port {serverport}')
 
     clientconnections: list[sever.ClientConnection] = [] # list of connections
+    inboundmessages: list[str] = [] # queue of messages received
+    outboundmessages: list[str] = [] # queue of messages to send
 
     # set up game data
     playerdata = player.Player()
@@ -48,8 +50,27 @@ def main():
         # listen for new socket connections
         s = server.accept_connection(serversocket)
         if not s is None:
-            clientconnections.append(s)
+            cc = server.ClientConnection(s)
+            clientconnections.append(cc)
             print(f'client connected')
+        
+        # update sockets
+        for cc in clientconnections:
+            cc.process()
+        
+        # receive data from sockets
+        inboundmessages.clear() # clear messages from last gameloop
+        for cc in clientconnections:
+            ms = cc.get_messages()
+            inboundmessages.extend(ms) # add received messages to queue
+        for m in inboundmessages:
+            print(m)
+        
+        # send data to sockets
+        for cc in clientconnections:
+            for m in outboundmessages:
+                cc.send_message(m)
+        outboundmessages.clear()
 
         # get pygame events
         events = pygame.event.get()
