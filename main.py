@@ -54,8 +54,11 @@ def main():
 
     # 设置屏幕宽度和高度
     
-    while astar(mazeData) == None:
-        maze.create_maze(mazeData, COLS, ROWS)  
+    # make sure the cells next to the exit not blocked
+    while mazeData[ROWS-2][COLS-1] == 1 and mazeData[ROWS-1][COLS-2] == 1:
+        mazeData = [[1 for _ in range(COLS)] for _ in range(ROWS)]
+        maze.create_maze(mazeData, COLS, ROWS)
+        print("regenerate")
 
     
     path = astar(mazeData)
