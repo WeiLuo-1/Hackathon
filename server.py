@@ -75,6 +75,9 @@ class ClientConnection:
             inbounddata: bytes = self.socket.recv(1024)
         except BlockingIOError:
             return b''
+        except ConnectionResetError:
+            self.disconnect()
+            return b''
         
         self.inboundbuffer += bytearray(inbounddata)
 

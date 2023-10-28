@@ -124,7 +124,7 @@ def main():
 
     clientsocket.send('get_state\n'.encode('ascii'))
     clientsocket.settimeout(10)
-    state = clientsocket.recv(4096)
+    state = clientsocket.recv(1000000)
     response = state.decode('ascii')
     print(response)
 
@@ -148,6 +148,27 @@ def main():
 
     path = astar(maze)
     print(path)
+
+    commands: list[str] = []
+
+    for i in range(len(path) - 1):
+        currentposition = path[i]
+        nextposition = path[i+1]
+        dx = nextposition[1] - currentposition[1]
+        dy = nextposition[0] - currentposition[0]
+        if dx == -1:
+            commands.append('move_left\n')
+        if dx == 1:
+            commands.append('move_right\n')
+        if dy == -1:
+            commands.append('move_up\n')
+        if dy == 1:
+            commands.append('move_down\n')
+        
+    print(commands)
+
+    for command in commands:
+        clientsocket.send(command.encode('ascii'))
 
 if __name__ == "__main__":
     main()
