@@ -4,6 +4,7 @@ import maze
 import constants
 import random
 import player
+import server
 from bot import astar 
 import level
 
@@ -33,6 +34,17 @@ def main():
     global lvl
     global mazeData
     global COLS,ROWS
+    
+    # set up sockets
+    serverport = 42000 + random.randint(0, 10) # random port for easier testing
+    serversocket = server.start_server('localhost', serverport)
+    print(f'started server on port {serverport}')
+
+    clientconnections: list[sever.ClientConnection] = [] # list of connections
+    inboundmessages: list[str] = [] # queue of messages received
+    outboundmessages: list[str] = [] # queue of messages to send
+
+    # set up game data
     playerdata = player.Player()
 
     # 设置屏幕宽度和高度
@@ -47,8 +59,33 @@ def main():
     running = True
     while running:
         clock.tick(60)
-        maze.draw_maze(window, mazeData, COLS, ROWS)
 
+        # listen for new socket connections
+        s = server.accept_connection(serversocket)
+        if not s is None:
+            cc = server.ClientConnection(s)
+            clientconnections.append(cc)
+            print(f'client connected')
+        
+        # update sockets
+        for cc in clientconnections:
+            cc.process()
+        
+        # receive data from sockets
+        inboundmessages.clear() # clear messages from last gameloop
+        for cc in clientconnections:
+            ms = cc.get_messages()
+            inboundmessages.extend(ms) # add received messages to queue
+        for m in inboundmessages:
+            print(m)
+        
+        # send data to sockets
+        for cc in clientconnections:
+            for m in outboundmessages:
+                cc.send_message(m)
+        outboundmessages.clear()
+
+        # get pygame events
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
@@ -57,8 +94,13 @@ def main():
         tilewidth = constants.screen_width // COLS
         tileheight = constants.screen_height // ROWS
 
+        # update game logic
         playerdata.process(events, mazeData, tilewidth, tileheight, ROWS, COLS)
+
+        # update game graphics
+        maze.draw_maze(window, mazeData, COLS, ROWS)
         playerdata.draw(window, tilewidth, tileheight)
+        pygame.display.update()
 
         if mazeData[playerdata.y][playerdata.x] == 2:
             lvl += 1
@@ -66,8 +108,6 @@ def main():
             mazeData = [[1 for _ in range(COLS)] for _ in range(ROWS)]
             maze.create_maze(mazeData,COLS,ROWS)
             playerdata.x, playerdata.y = 0,0
-        
-        pygame.display.update()
         
     pygame.quit()
     # maze.print_maze(mazeData)
