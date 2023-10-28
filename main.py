@@ -21,12 +21,11 @@ pygame.display.set_caption("space invaders")
 # 初始化迷宫矩阵，1代表墙，0代表路径
 mazeData = [[1 for _ in range(COLS)] for _ in range(ROWS)]
 
-playerX = 0
-playerY = 0
-
 window = pygame.display.set_mode((constants.screen_width, constants.screen_height))
 clock = pygame.time.Clock()
 def main():
+    playerdata = player.Player()
+
     # 设置屏幕宽度和高度
   
     maze.create_maze(mazeData, COLS, ROWS)
@@ -35,10 +34,17 @@ def main():
     while running:
         clock.tick(60)
         maze.draw_maze(window, mazeData, COLS, ROWS)
-        for event in pygame.event.get():
+
+        events = pygame.event.get()
+        for event in events:
             if event.type == pygame.QUIT:
                 running = False
-            player.move(playerX, playerY, window, event)
+
+        tilewidth = constants.screen_width // COLS
+        tileheight = constants.screen_height // ROWS
+
+        playerdata.process(events, tilewidth, tileheight, ROWS, COLS)
+        playerdata.draw(window, tilewidth, tileheight)
         # pygame.display.update()
         
     pygame.quit()
