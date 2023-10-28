@@ -4,7 +4,7 @@ import maze
 import constants
 import random
 import player
-
+from bot import astar 
 
 pygame.init()
 # 迷宫的行列数
@@ -30,6 +30,8 @@ def main():
     # 设置屏幕宽度和高度
   
     maze.create_maze(mazeData, COLS, ROWS)
+    path = astar(mazeData)
+    print(path)
 
     running = True
     while running:
