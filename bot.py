@@ -1,5 +1,6 @@
 import heapq
 import socket
+import time
 
 class Node:
     def __init__(self, parent=None, position=None):
@@ -117,58 +118,62 @@ def add_to_open(open_list, child):
 
 
 def main():
-    maze: list[list[int]] = []
-
     clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     clientsocket.connect(('localhost', 42000))
 
-    clientsocket.send('get_state\n'.encode('ascii'))
-    clientsocket.settimeout(10)
-    state = clientsocket.recv(1000000)
-    response = state.decode('ascii')
-    print(response)
+    while True:
+        maze: list[list[int]] = []
 
-    playerx, playery, columns, mazetext = response.split()
-    playerx = int(playerx)
-    playery = int(playery)
-    columns = int(columns)
+        clientsocket.send('get_state\n'.encode('ascii'))
+        clientsocket.settimeout(10)
+        state = clientsocket.recv(1000000)
+        response = state.decode('ascii')
+        print(response)
 
-    row = 0
-    while len(mazetext) > 0:
-        maze.append([])
-        for col in range(columns):
-            c = mazetext[0]
-            mazetext = mazetext[1:]
-            maze[row].append(int(c))
+        playerx, playery, columns, mazetext = response.split()
+        playerx = int(playerx)
+        playery = int(playery)
+        columns = int(columns)
 
-        row += 1
-    
-    for row in maze:
-        print(row)
+        row = 0
+        while len(mazetext) > 0:
+            maze.append([])
+            for col in range(columns):
+                c = mazetext[0]
+                mazetext = mazetext[1:]
+                maze[row].append(int(c))
 
-    path = astar(maze, playerx, playery)
-    print(path)
-
-    commands: list[str] = []
-
-    for i in range(len(path) - 1):
-        currentposition = path[i]
-        nextposition = path[i+1]
-        dx = nextposition[1] - currentposition[1]
-        dy = nextposition[0] - currentposition[0]
-        if dx == -1:
-            commands.append('move_left\n')
-        if dx == 1:
-            commands.append('move_right\n')
-        if dy == -1:
-            commands.append('move_up\n')
-        if dy == 1:
-            commands.append('move_down\n')
+            row += 1
         
-    print(commands)
+        for row in maze:
+            print(row)
 
-    for command in commands:
-        clientsocket.send(command.encode('ascii'))
+        path = astar(maze, playerx, playery)
+        print(path)
+
+        commands: list[str] = []
+
+        for i in range(len(path) - 1):
+            currentposition = path[i]
+            nextposition = path[i+1]
+            dx = nextposition[1] - currentposition[1]
+            dy = nextposition[0] - currentposition[0]
+            if dx == -1:
+                commands.append('move_left\n')
+            if dx == 1:
+                commands.append('move_right\n')
+            if dy == -1:
+                commands.append('move_up\n')
+            if dy == 1:
+                commands.append('move_down\n')
+            
+        print(commands)
+
+        for command in commands:
+            time.sleep(0.1)
+            clientsocket.send(command.encode('ascii'))
+        
+        time.sleep(1)
 
 if __name__ == "__main__":
     main()
