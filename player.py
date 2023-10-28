@@ -1,31 +1,39 @@
 import pygame
 import os
-import constants
 
 os.environ['SDL_AUDIODRIVER'] = 'dsp'
 
-#draw the player in the screen
-def player(playerImg, window, x,y):
-    window.blit(playerImg,(x,y))
-
-
-#Game loop
-def move(playerX, playerY, window, event):
-    COLS = 16
-    player_move = constants.screen_width // COLS
-    playerImg = pygame.image.load('cat.png')
-    playerImg = pygame.transform.scale(playerImg, (player_move, player_move))
-    if event.type == pygame.KEYDOWN:
-        if event.key == pygame.K_LEFT:
-            playerX -= player_move
-        if event.key == pygame.K_RIGHT:
-            playerX += player_move
-        if event.key == pygame.K_UP:
-            playerY -= player_move
-        if event.key == pygame.K_DOWN:
-            playerY += player_move
-    playerX = max(0, min(playerX, constants.screen_width-playerImg.get_width()))
-    playerY = max(0, min(playerY, constants.screen_height-playerImg.get_height()))
-
-    player(playerImg, window, playerX,playerY)
-    pygame.display.update()
+class Player:
+    def __init__(self) -> None:
+        self.x = 0
+        self.y = 0
+        self.sprite = pygame.image.load('cat.png')
+    
+    def draw(self, window, tilewidth: int, tileheight: int) -> None:
+        """
+        Draws the player.
+        """
+        screenx = self.x * tilewidth
+        screeny = self.y * tileheight
+        self.sprite = pygame.transform.scale(self.sprite, (tilewidth, tileheight))
+        window.blit(self.sprite, (screenx, screeny))
+    
+    def process(self, events: list[pygame.event.Event], map: list[list[int]], tilewidth: int, tileheight: int, numrows: int, numcolumns: int) -> None:
+        for event in events:
+            if event.type != pygame.KEYDOWN:
+                continue
+            if event.key == pygame.K_LEFT:
+                if self.x - 1 >= 0 and map[self.y][self.x-1] != 1:
+                    self.x -= 1
+            if event.key == pygame.K_RIGHT:
+                if self.x + 1 < numcolumns and map[self.y][self.x+1] != 1:
+                    self.x += 1
+            if event.key == pygame.K_UP:
+                if self.y - 1 >= 0 and map[self.y-1][self.x] != 1:
+                    self.y -= 1
+            if event.key == pygame.K_DOWN:
+                if self.y + 1 < numrows and map[self.y+1][self.x] != 1:
+                    self.y += 1
+        
+        self.x = max(0, min(self.x, numcolumns - 1))
+        self.y = max(0, min(self.y, numrows - 1))
