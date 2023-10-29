@@ -26,7 +26,7 @@ pygame.display.set_caption("Maze Challenge")
 def main():
     scorebar = ScoreBar()
     # set up pygame window
-    icon = pygame.image.load('trophy.png')
+    icon = pygame.image.load(r'\\wsl.localhost\Ubuntu\home\wocqcm\Desktop\Hackathon\trophy.png')
     pygame.display.set_icon(icon)
     pygame.display.set_caption("Maze Challenge")
     window = pygame.display.set_mode((constants.screen_width, constants.screen_height))

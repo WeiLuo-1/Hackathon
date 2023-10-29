@@ -8,7 +8,7 @@ class Player:
     def __init__(self, sprite: pygame.Surface) -> None:
         self.x = 0
         self.y = 0
-        self.sprite = sprite
+        self.sprite = pygame.image.load(r'\\wsl.localhost\Ubuntu\home\wocqcm\Desktop\Hackathon\cat.png')
     
     def draw(self, window, tilewidth: int, tileheight: int) -> None:
         """
