@@ -16,44 +16,44 @@ def create_maze(maze, COLS, ROWS):
     directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
 
     while stack:
-        current_row, current_col = stack[-1]  # 查看当前位置
+        current_row, current_col = stack[-1]  # View current location
 
-        # 获取当前位置可以前往的相邻位置
+        # Get the adjacent locations that the current location can go to
         valid_neighbours = []
         for dr, dc in directions:
             new_row, new_col = current_row + dr, current_col + dc
 
-            # 检查新位置是否在迷宫范围内并且是墙
+            # Check if the new location is within the maze and is a wall
             if 0 <= new_row < ROWS and 0 <= new_col < COLS and maze[new_row][new_col] == 1:
-                # 检查这个相邻位置是否有两个以上的空邻居
+                # Check whether this adjacent position has more than two empty neighbors
                 count_empty = 0
                 for dr2, dc2 in directions:
-                    # 检查相邻位置的相邻位置
+                    # Check adjacent locations for adjacent locations
                     if 0 <= new_row + dr2 < ROWS and 0 <= new_col + dc2 < COLS and maze[new_row + dr2][new_col + dc2] == 0:
                         count_empty += 1
 
-                # 如果有不止一个空的邻居，则这个方向不是一个有效的方向
+                # This direction is not a valid direction if there is more than one empty neighbor
                 if count_empty < 2:
                     valid_neighbours.append((new_row, new_col))
 
         if valid_neighbours:
-            # 随机选择一个有效的邻居作为下一个点
+            # Randomly select a valid neighbor as the next point
             next_row, next_col = random.choice(valid_neighbours)
-            # 将新位置设为路径，并将其添加到栈中
+            # Set the new location to the path and add it to the stack
             maze[next_row][next_col] = 0
             stack.append((next_row, next_col))
         else:
-            # 如果没有有效的邻居，我们已经到达“死胡同”，回溯
+            # If there are no valid neighbors, we have reached a "dead end" and backtrack
             stack.pop()
 
-    # 确保有一个出口，我们设定迷宫的右下角为出口
-    maze[ROWS - 1][COLS - 1] = 2  # 2表示出口
+    # Make sure there is an exit. We set the lower right corner of the maze as the exit.
+    maze[ROWS - 1][COLS - 1] = 2  # 2 means export
 
 
 # draw maze
 def draw_maze(window,maze, COLS, ROWS):
-    WIDTH_CELL = constants.screen_width // COLS
-    HEIGHT_CELL = constants.screen_height // ROWS
+    WIDTH_CELL = constants.tileWidth
+    HEIGHT_CELL = constants.tileHeight
     window.fill(constants.WHITE)
     for i in range(ROWS):
         for j in range(COLS):

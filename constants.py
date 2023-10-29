@@ -1,8 +1,10 @@
 screen_width = 640
-screen_height = 640
+screen_height = 670
 playerX = 0
 playerY = 0
 player_move = 32
+tileWidth = 16
+tileHeight = 16
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)

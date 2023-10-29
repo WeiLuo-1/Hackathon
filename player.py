@@ -5,10 +5,10 @@ import constants
 os.environ['SDL_AUDIODRIVER'] = 'dsp'
 
 class Player:
-    def __init__(self) -> None:
+    def __init__(self, sprite: pygame.Surface) -> None:
         self.x = 0
         self.y = 0
-        self.sprite = pygame.image.load('cat.png')
+        self.sprite = sprite
     
     def draw(self, window, tilewidth: int, tileheight: int) -> None:
         """

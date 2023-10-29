@@ -125,11 +125,11 @@ def main():
         maze: list[list[int]] = []
 
         clientsocket.send('get_state\n'.encode('ascii'))
-        clientsocket.settimeout(10)
-        state = clientsocket.recv(1000000)
+        # clientsocket.settimeout(10)
+        state = clientsocket.recv(10000)
         response = state.decode('ascii')
         print(response)
-
+        
         playerx, playery, columns, mazetext = response.split()
         playerx = int(playerx)
         playery = int(playery)
