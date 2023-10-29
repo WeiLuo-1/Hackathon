@@ -9,8 +9,6 @@ from bot import astar
 import level
 
 pygame.init()
-<<<<<<< HEAD
-# 迷宫的行列数
 lvl = 1
 
 
@@ -24,14 +22,6 @@ pygame.display.set_caption("Maze Challenge")
 # 每个单元格的宽度和高度
 
 
-# 初始化迷宫矩阵，1代表墙，0代表路径
-mazeData = [[1 for _ in range(COLS)] for _ in range(ROWS)]
-maze.create_maze(mazeData,COLS,ROWS)
-window = pygame.display.set_mode((constants.screen_width, constants.screen_height))
-clock = pygame.time.Clock()
-=======
-
->>>>>>> refs/remotes/origin/main
 def main():
     # set up pygame window
     icon = pygame.image.load('trophy.png')
@@ -65,32 +55,10 @@ def main():
     clientconnections: list[server.ClientConnection] = [] # list of connections
     inboundmessages: list[str] = [] # queue of messages received
     outboundmessages: list[str] = [] # queue of messages to send
-
-<<<<<<< HEAD
-    # set up game data
-    playerdata = player.Player()
-
-    # 设置屏幕宽度和高度
-  
-    num_none = 0
-    num_test = 100
-    for i in range(num_test):
-        mazeData = [[1 for _ in range(COLS)] for _ in range(ROWS)]
-        maze.create_maze(mazeData, COLS, ROWS)
-        if astar(mazeData) is None:
-            num_none += 1  
-
-    print("Num none", num_none)
-
-    while astar(mazeData) == None:
-        mazeData = [[1 for _ in range(COLS)] for _ in range(ROWS)]
-        maze.create_maze(mazeData, COLS, ROWS)  
-=======
     # detect impossible mazes
     while astar(mazeData) == None:
         mazeData = [[1 for _ in range(COLS)] for _ in range(ROWS)]
-        maze.create_maze(mazeData, COLS, ROWS)
->>>>>>> refs/remotes/origin/main
+        maze.create_maze(mazeData, COLS, ROWS)  
     
     path = astar(mazeData)
     print(path)
