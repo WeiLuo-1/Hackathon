@@ -48,7 +48,8 @@ def main():
     maze.create_maze(mazeData,COLS,ROWS)
 
     # set up sockets
-    serverport = 42000 + random.randint(0, 10) # random port for easier testing
+    # serverport = 42000 + random.randint(0, 10) # random port for easier testing
+    serverport = 42000
     serversocket = server.start_server('localhost', serverport)
     print(f'started server on port {serverport}')
 
@@ -56,11 +57,11 @@ def main():
     inboundmessages: list[str] = [] # queue of messages received
     outboundmessages: list[str] = [] # queue of messages to send
     # detect impossible mazes
-    while astar(mazeData) == None:
+    while astar(mazeData, playerdata.x, playerdata.y) == None:
         mazeData = [[1 for _ in range(COLS)] for _ in range(ROWS)]
         maze.create_maze(mazeData, COLS, ROWS)  
     
-    path = astar(mazeData)
+    path = astar(mazeData, playerdata.x, playerdata.y)
     print(path)
     print()
 
@@ -114,11 +115,11 @@ def main():
         if len(inboundmessages) > 0:
             command = inboundmessages.pop(0)
         if command == constants.COMMAND_GET_STATE:
-            m = ''
+            m = f'{playerdata.x} {playerdata.y} {COLS} '
             for row in mazeData:
                 for col in row:
                     m += str(col)
-                m += '\n'
+            m += '\n'
             outboundmessages.append(m)
         
         # allow player to interactively send commands (using arrow keys)
@@ -149,11 +150,11 @@ def main():
             ROWS,COLS = level.level(lvl)
             mazeData = [[1 for _ in range(COLS)] for _ in range(ROWS)]
             maze.create_maze(mazeData,COLS,ROWS)
-            while astar(mazeData) == None:
+            while astar(mazeData, playerdata.x, playerdata.y) == None:
                 mazeData = [[1 for _ in range(COLS)] for _ in range(ROWS)]
                 maze.create_maze(mazeData, COLS, ROWS)
             playerdata.x, playerdata.y = 0,0
-            path = astar(mazeData)
+            path = astar(mazeData, playerdata.x, playerdata.y)
             print(path)
             print()
         
