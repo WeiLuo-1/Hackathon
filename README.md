@@ -28,16 +28,14 @@ You need to have the following software installed:
 
 Follow these steps to get the game running on your computer:
 
-1. First, initiate the bot script by running: python3 bot.py 
-2. After the bot is up and running, start the main program: python main.py
-
-
-
-Upon launching the game, you control your character using the keyboard. The objective is to move from the top-left corner of the maze to the lower-right corner as the end point.
+1. run the main program to active the maze
+2. initiate the bot script by running: python3 bot.py
+3. Upon launching the game, you control your character using the keyboard. The objective is to move from the top-left corner of the maze to the lower-right corner as the end point.
+4. After player arrive the goal, bot will run to the goal
 
 ## Usage
 
-Once the game starts, you'll be controlling a character on the screen using your keyboard's arrow keys. Your task is to find a path to the green square representing the end point. This path should be shorter than the one proposed by the AI using the A* algorithm.
+Once the game starts, you'll be controlling a character on the screen using your keyboard's arrow keys. Your task is to find a path to the red square representing the end point. This path should be shorter than the one proposed by the AI using the A* algorithm.
 
 ## Contributing
 
