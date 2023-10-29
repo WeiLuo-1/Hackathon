@@ -89,8 +89,8 @@ def astar(maze):
                 continue
 
             child.g = current_node.g + 1
-            child.h = ((child.position[0] - end_node.position[0]) ** 2) + (
-                (child.position[1] - end_node.position[1]) ** 2
+            child.h = (abs(child.position[0] - end_node.position[0]) +
+                abs(child.position[1] - end_node.position[1])
             )
             child.f = child.g + child.h
 

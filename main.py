@@ -10,7 +10,6 @@ import level
 
 pygame.init()
 # 迷宫的行列数
-
 lvl = 1
 
 
@@ -48,10 +47,20 @@ def main():
     playerdata = player.Player()
 
     # 设置屏幕宽度和高度
-    
-    while astar(mazeData) == None:
-        maze.create_maze(mazeData, COLS, ROWS)  
+  
+    num_none = 0
+    num_test = 100
+    for i in range(num_test):
+        mazeData = [[1 for _ in range(COLS)] for _ in range(ROWS)]
+        maze.create_maze(mazeData, COLS, ROWS)
+        if astar(mazeData) is None:
+            num_none += 1  
 
+    print("Num none", num_none)
+
+    while astar(mazeData) == None:
+        mazeData = [[1 for _ in range(COLS)] for _ in range(ROWS)]
+        maze.create_maze(mazeData, COLS, ROWS)  
     
     path = astar(mazeData)
     print(path)
