@@ -1,1 +1,4 @@
-# Hackathon
+## Summary
+# players control a cat character, starting at the top left corner, and navigate towards a goal using keyboard controls. After the player reaches the goal, an AI bot, powered by the A* algorithm, takes its turn to find the goal. The winner is determined by who takes the fewest steps: if the player's steps are less than or equal to the AI's, the human wins, otherwise, the AI is victorious. As the game progresses, mazes increase in size. The overarching goal of this game isn't just competition, but also education, as players have the opportunity to learn from the AI's pathfinding strategies, continuously improving their own maze-solving techniques. It can also apply for the real world, With AI models like ChatGPT gaining prominence and outperforming humans in various fields there's an invaluable opportunity for us to study their methods and enhance our efficiency.
+
+
